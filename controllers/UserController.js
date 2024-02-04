@@ -12,22 +12,6 @@ cloudinary.config({
 
 class UserController {
 
-    static getalluser = async (req, res) => {
-        try {
-            const users = await UserModel.find()
-            // console.log(user)
-            res.status(201).json({
-                status: 'success',
-                message: 'successfull',
-                users,
-            })
-            // res.send('hello user')
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
     static userinsert = async (req, res) => {
         try {
             // console.log(req.body);
@@ -84,6 +68,23 @@ class UserController {
         }
 
     }
+
+    static getalluser = async (req, res) => {
+        try {
+            const users = await UserModel.find()
+            // console.log(user)
+            res.status(201).json({
+                status: 'success',
+                message: 'successfull',
+                users,
+            })
+            // res.send('hello user')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     static verifylogin = async (req, res) => {
         try {
             const { email, password } = req.body;
