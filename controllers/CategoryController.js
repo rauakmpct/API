@@ -50,7 +50,7 @@ class CategoryController {
     static categoryview = async (req, res) => {
         try {
             //    console.log(req.params.id);
-            const category = await CategoryModel.find()
+            const category = await CategoryModel.findById(req.params.id)
             res.status(201).json({
                 status: 'success',
                 message: 'successfull',
@@ -65,7 +65,7 @@ class CategoryController {
             const { cname, image } = req.body
             if (req.files) {
                 // console.log(req.params.id);
-                const category = await CategoryModel.find()
+                const category = await CategoryModel.find(req.params.id)
                 const imageid = category.image.public_id
                 // console.log(imageid);
                 await cloudinary.uploader.destroy(imageid)
@@ -87,7 +87,7 @@ class CategoryController {
                     cname: cname
                 }
             }
-            const update = await CategoryModel.find()
+            const update = await CategoryModel.findByIdAndUpdate(req.params.id, data)
             res.status(201).json({
                 status: 'success',
                 message: 'successfull',
@@ -99,7 +99,7 @@ class CategoryController {
     }
     static categorydelete = async (req, res) => {
         try {
-            await CategoryModel.find()
+            await CategoryModel.findByIdAndDelete(req.params.id)
             res.status(201).json({
                 status: 'success',
                 message: 'Delete Successfully',

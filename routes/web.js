@@ -12,16 +12,16 @@ router.post('/verifylogin', UserController.verifylogin)
 //CategoryController
 router.post('/categoryinsert', CategoryController.categoryinsert)
 router.get('/categorydisplay', CategoryController.categorydisplay)
-router.get('/categoryview', CategoryController.categoryview)
-router.post('/categoryupdate', CategoryController.categoryupdate)
-router.get('/categorydelete', CategoryController.categorydelete)
+router.get('/categoryview/:id', CategoryController.categoryview)
+router.post('/categoryupdate/:id', CategoryController.categoryupdate)
+router.get('/categorydelete/:id', CategoryController.categorydelete)
 
 //ProductController
 router.post('/createproduct', ProductController.createproduct)
 router.get('/getallproduct', ProductController.getallproduct)
-router.get('/getallproductdetail', ProductController.getallproductdetail)
-router.post('/updateproduct', ProductController.updateproduct)
-router.get('/deleteproduct', ProductController.deleteproduct)
+router.get('/getallproductdetail/:id', ProductController.getallproductdetail)
+router.post('/updateproduct/:id', ProductController.updateproduct)
+router.get('/deleteproduct/:id', ProductController.deleteproduct)
 
 
 

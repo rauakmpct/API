@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema(
     },
     numOfReviews: {
       type: Number,
-      default: 0,
+      default: 20,
     },
     // reviews: [
     //   {
@@ -51,7 +51,7 @@ const productSchema = new mongoose.Schema(
     rating: {
       type: Number,
       required: true,
-      default: 0,
+      default: 4,
     },
 
     image: {
@@ -64,7 +64,7 @@ const productSchema = new mongoose.Schema(
   },
     category: {
       type: String,
-      required: true,
+      // required: true,
     },
 
     // user: {
