@@ -68,7 +68,21 @@ class UserController {
         }
 
     }
-
+    static getuserdetails = async (req, res) => {
+        try {
+     
+            const user = await UserModel.findById(req.params.id)
+            // console.log(user)
+            res.status(201).json({
+                status: 'success',
+                message: 'successfull',
+                user,
+            })
+            // res.send('hello user')
+        } catch (error) {
+            console.log(error);
+        }
+    }
     static getalluser = async (req, res) => {
         try {
             const users = await UserModel.find()
@@ -83,8 +97,6 @@ class UserController {
             console.log(error);
         }
     }
-
-
     static verifylogin = async (req, res) => {
         try {
             const { email, password } = req.body;
@@ -122,123 +134,108 @@ class UserController {
             console.log(err);
         }
     }
+    static logout = async (req, res) => {
+        try {
+            res.cookie('token', null, {
+                expires: new Date(Date.now()),
+                httpOnly: true,
+            })
 
-    // static getuserdetails = async (req, res) => {
-    //     try {
-    //         const user = await UserModel.find()
-    //         // console.log(user)
-    //         res.status(201).json({
-    //             status: 'success',
-    //             message: 'successfull',
-    //             user,
-    //         })
-    //         res.send('hello user')
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-    // static logout = async (req, res) => {
-    //     try {
-    //       res.cookie('token', null, {
-    //         expires: new Date(Date.now()),
-    //         httpOnly: true,
-    //       })
+            res.status(200).json({
+                success: true,
+                message: 'Logged Out Successfully',
+            })
+        } catch (err) {
+            console.log(error)
+        }
+    }
+    static updatepassword = async (req, res) => {
+        try {
+            // const { id } = req.data1
+            const { old_password, new_password, cpassword } = req.body;
+            if (old_password && new_password && cpassword) {
+                const user = await UserModel.findById(req.params.id);
+                const ismatch = await bcrypt.compare(old_password, user.password);
+                if (!ismatch) {
+                    res
+                        .status(401)
+                        .json({ status: "failed", message: "old password is incorrect" });
+                } else {
+                    if (new_password !== cpassword) {
+                        res
+                            .status(401)
+                            .json({ status: "failed", message: "  Password and confirm password do not match" });
 
-    //       res.status(200).json({
-    //         success: true,
-    //         message: 'Logged Out',
-    //       })
-    //     } catch (err) {
-    //       console.log(error)
-    //     }
-    //   }
-    //   static updatepassword = async (req, res) => {
-    //     try {
-    //         // const { id } = req.data1
-    //         const { old_password, new_password, cpassword } = req.body;
-    //         if (old_password && new_password && cpassword) {
-    //             const user = await UserModel.findById(req.params.id);
-    //             const ismatch = await bcrypt.compare(old_password, user.password);
-    //             if (!ismatch) {
-    //                 res
-    //                     .status(401)
-    //                     .json({ status: "failed", message: "old password is incorrect" });
-    //             } else {
-    //                 if (new_password !== cpassword) {
-    //                     res
-    //                         .status(401)
-    //                         .json({ status: "failed", message: "  Password and confirm password do not match" });
+                    } else {
+                        const newHashpassword = await bcrypt.hash(new_password, 10);
+                        await UserModel.findByIdAndUpdate(req.params.id, {
+                            $set: { password: newHashpassword },
+                        });
+                        res.status(201).json({
+                            status: 'success',
+                            message: 'PASSWORD UPDATED SUCCESSFULLY 😃',
 
-    //                 } else {
-    //                     const newHashpassword = await bcrypt.hash(new_password, 10);
-    //                     await UserModel.findByIdAndUpdate(req.params.id, {
-    //                         $set: { password: newHashpassword },
-    //                     });
-    //                     res.status(201).json({
-    //                         status: 'success',
-    //                         message: 'PASSWORD UPDATED SUCCESSFULLY 😃',
+                        })
 
-    //                     })
+                    }
+                }
+            } else {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'All fiels required',
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    static updateprofile = async (req, res) => {
+        try {
+            // console.log(req.files.avatar)
+            // console.log(req.body)
+            // const { id } = req.data1
+            if (req.files) {
+                // Update the profile of user
+                const user = await UserModel.findById(req.params.id)
+                const image_id = user.image.public_id
+                // console.log(image_id)
+                await cloudinary.uploader.destroy(image_id)
+                const file = req.files.image
+                const myCloud = await cloudinary.uploader.upload(file.tempFilePath, {
+                    folder: 'profileimageapi',
+                    width: 150,
+                    crop: 'scale',
+                })
 
-    //                 }
-    //             }
-    //         } else {
-    //             return res.status(400).json({
-    //                 status: 'failed',
-    //                 message: 'All fiels required',
-    //             })
-    //         }
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-    // static updateprofile = async (req, res) => { 
-    //     try {
-    //         // console.log(req.files.avatar)
-    //         // console.log(req.body)
-    //         // const { id } = req.data1
-    //         if (req.files) {
-    //             // Update the profile of user
-    //             const user = await UserModel.findById(req.params.id)
-    //             const image_id = user.image.public_id
-    //             // console.log(image_id)
-    //             await cloudinary.uploader.destroy(image_id)
-    //             const file = req.files.image
-    //             const myCloud = await cloudinary.uploader.upload(file.tempFilePath, {
-    //                 folder: 'profileimageapi',
-    //                 width: 150,
-    //                 crop: 'scale',
-    //             })
+                var data = {
+                    name: req.body.name,
+                    email: req.body.email,
 
-    //             var data = {
-    //                 name: req.body.name,
-    //                 email: req.body.email,
+                    image: {
+                        public_id: myCloud.public_id,
+                        url: myCloud.secure_url,
+                    },
+                }
+            } else {
+                var data = {
+                    name: req.body.name,
+                    email: req.body.email,
+                }
+            }
 
-    //                 image: {
-    //                     public_id: myCloud.public_id,
-    //                     url: myCloud.secure_url,
-    //                 },
-    //             }
-    //         } else {
-    //             var data = {
-    //                 name: req.body.name,
-    //                 email: req.body.email,
-    //             }
-    //         }
+            // Update Code
+            const result = await UserModel.findByIdAndUpdate(req.params.id, data)
 
-    //         // Update Code
-    //         const result = await UserModel.findByIdAndUpdate(req.params.id, data)
-
-    //         res.status(200).json({
-    //             success: true,
-    //             message: 'Profile  updated sucessfully',
-    //             result,
-    //         })
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-    // }
-    // // adminapi
+            res.status(200).json({
+                success: true,
+                message: 'Profile  updated sucessfully',
+                result,
+            })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    // adminapi
     // static getsingleuser = async (req, res) => {
     //     try {
     //         const user = await UserModel.findById(req.params.id)

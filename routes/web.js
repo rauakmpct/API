@@ -2,12 +2,17 @@ const express = require('express')
 const UserController = require('../controllers/UserController')
 const CategoryController = require('../controllers/CategoryController')
 const ProductController = require('../controllers/ProductController')
+const checkauth = require('../middlewear/auth');
 const router = express.Router()
 
 // UserController 
 router.get('/getalluser', UserController.getalluser)
+router.get('/getuserdetails/:id', UserController.getuserdetails)
 router.post('/userinsert', UserController.userinsert)
 router.post('/verifylogin', UserController.verifylogin)
+router.get('/logout/:id', UserController.logout)
+router.post('/updatepassword/:id', UserController.updatepassword)
+router.post('/updateprofile/:id', UserController.updateprofile)
 
 //CategoryController
 router.post('/categoryinsert', CategoryController.categoryinsert)
