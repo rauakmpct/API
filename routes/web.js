@@ -2,6 +2,10 @@ const express = require('express')
 const UserController = require('../controllers/UserController')
 const CategoryController = require('../controllers/CategoryController')
 const ProductController = require('../controllers/ProductController')
+const PaymentController = require('../controllers/PaymentController')
+const OrderController = require('../controllers/OrderContoller')
+
+
 const checkauth = require('../middlewear/auth');
 const router = express.Router()
 
@@ -28,6 +32,11 @@ router.get('/getallproductdetail/:id', ProductController.getallproductdetail)
 router.post('/updateproduct/:id', ProductController.updateproduct)
 router.get('/deleteproduct/:id', ProductController.deleteproduct)
 
+
+//payment
+router.post('/payment/process', PaymentController.processPayment)
+router.get('/stripeapiKey', PaymentController.sendStripeApiKey)
+router.post('/order/create', checkauth, OrderController.newOrder)
 
 
 
